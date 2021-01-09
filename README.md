@@ -1,11 +1,31 @@
 ## Mqtt-broker
 
-Simple Mqtt broker used in Electrolink projet. 
+Simple Mqtt broker used in mqtt projet. 
+## Library
+- Aede - boker
+- Mqtt - client
 
-## Install and run
+## Install 
+
 ``` shell
 $ npm install
+```
+
+## Run boker
+
+``` shell
 $ npm start
 ```
-## License
-[Apache-2.0](https://github.com/projectiota/electrolink/blob/master/LICENSE)
+or
+
+``` shell
+$ node boker
+```
+
+## Run client test
+
+``` shell
+$ node client
+```
+
+

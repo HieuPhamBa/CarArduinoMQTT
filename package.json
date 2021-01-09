@@ -1,0 +1,17 @@
+{
+  "name": "mqtt-broker",
+  "authors": [
+    "Uros Petrevski"
+  ],
+  "description": "Mqtt broker with websockets",
+  "license": "Apache 2.0",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node broker.js"
+  },
+  "dependencies": {
+    "aedes": "^0.26.1",
+    "mqtt": "^4.2.6",
+    "websocket-stream": "^4.0.0"
+  }
+}
