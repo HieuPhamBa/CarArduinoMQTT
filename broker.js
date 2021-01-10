@@ -5,10 +5,12 @@ import aedes from 'aedes'
 import net from 'net'
 import http from 'http'
 import { Console } from 'console'
+import fs from 'fs'
+
 
 const tls_options = {
-	key: require('fs').readFileSync('./cert/privkey.pem'),
-	cert: require('fs').readFileSync('./cert/cert.pem'),
+	key: fs.readFileSync('./cert/privkey.pem'),
+	cert: fs.readFileSync('./cert/cert.pem'),
 	requestCert: false,
 	rejectUnauthorized: false
 };
