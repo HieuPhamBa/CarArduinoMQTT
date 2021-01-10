@@ -6,9 +6,16 @@ import net from 'net'
 import http from 'http'
 import { Console } from 'console'
 
+const tls_options = {
+	key: require('fs').readFileSync('./cert/privkey.pem'),
+	cert: require('fs').readFileSync('./cert/cert.pem'),
+	requestCert: false,
+	rejectUnauthorized: false
+};
+
 const aedesServer = aedes()
 const server = net.createServer(aedesServer.handle)
-const httpServer = http.createServer()
+const httpServer = http.createServer(tls_options)
 
 const {
   MQTT_PORT,
