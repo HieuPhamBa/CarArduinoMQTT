@@ -83,6 +83,6 @@ aedesServer.on('clientDisconnect', (client) => {
   console.log(message)
 })
 
-server.listen(MQTT_PORT, function () {
+server.listen(MQTT_PORT, '0.0.0.0', function () {
   log(`server listening on port ${MQTT_PORT}`)
 })
