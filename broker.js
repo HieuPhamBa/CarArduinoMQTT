@@ -3,10 +3,12 @@ import { default as Constanst} from './commons/constants.js'
 
 import aedes from 'aedes'
 import net from 'net'
+import http from 'http'
 import { Console } from 'console'
 
 const aedesServer = aedes()
 const server = net.createServer(aedesServer.handle)
+const httpServer = http.createServer()
 
 const {
   MQTT_PORT,
@@ -17,6 +19,8 @@ const {
   CLEINT_CONNECTED_MESSAGE,
   CLEINT_DISCONNECTED_MESSAGE,
 } = Constanst
+
+const wsPort = 8883 
 
 // helper function to log date+text to console:
 const log = (text) => {
@@ -81,6 +85,10 @@ aedesServer.authorizePublish = function (client, packet, callback) {
 aedesServer.on('clientDisconnect', (client) => {
   const message = stringFormat(CLEINT_DISCONNECTED_MESSAGE, client.id)
   console.log(message)
+})
+
+httpServer.listen(wsPort, function () {
+  console.log('websocket server listening on port ', wsPort)
 })
 
 const listener = server.listen(MQTT_PORT, '0.0.0.0', function () {
