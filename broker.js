@@ -1,76 +1,88 @@
-var aedes = require('aedes')()
-var server = require('net').createServer(aedes.handle)
+import stringFormat from './commons/helpers.js'
+import { default as Constanst} from './commons/constants.js'
 
-const PORT = 5000
-const TOPIC = 'main'
+import aedes from 'aedes'
+import net from 'net'
+import { Console } from 'console'
+
+const aedesServer = aedes()
+const server = net.createServer(aedesServer.handle)
+
+const {
+  MQTT_PORT,
+  PUBLISH_MESSAGE,
+  SUBSCRIBE_MESSAGE,
+  AUTH_SUCCESS_MESSAGE,
+  AUTH_FAILSE_MESSAGE,
+  CLEINT_CONNECTED_MESSAGE,
+  CLEINT_DISCONNECTED_MESSAGE,
+} = Constanst
 
 // helper function to log date+text to console:
 const log = (text) => {
   console.log(`[${new Date().toLocaleString()}] ${text}`)
 }
 
-aedes.authenticate = function (client, username, password, callback) {
+aedesServer.authenticate = function (client, username, password, callback) {
   var error = null
   var isAuth = false
+  var message = ''
 
-  if(username == 'robotCar'&& password =='1234567890'){
+  if (username == 'robotCar' && password == '1234567890') {
     isAuth = true
-    message='test ok'
-    console.log( `Client ${client.id} login success`)
-  }else{
+    message = AUTH_SUCCESS_MESSAGE
+  } else {
     error = new Error('Auth error')
     error.returnCode = 4
+
+    message = AUTH_FAILSE_MESSAGE
   }
+
+  message = stringFormat(message, client.id)
+  console.log(message)
 
   callback(error, isAuth)
 }
 
 // client connection event:
-aedes.on('client', (client) => {
-   // let message = `Client ${client.id} just connected`
-   let message = `Client ${client.id} just connected`
-    log(message)
-    aedes.publish({
-      cmd: 'publish',
-      qos: 2,
-      topic: 'main',
-      payload: message,
-      retain: false
-    })
-  }
-)
-
-
-aedes.on('subscribe', function (subscriptions, client) {
-  console.log('MQTT client \x1b[32m' + (client ? client.id : client) +
-          '\x1b[0m subscribed to topics: ' + subscriptions.map(s => s.topic).join('\n'), 'from broker', aedes.id) 
+aedesServer.on('client', (client) => {
+  const message = stringFormat(CLEINT_CONNECTED_MESSAGE, client.id)
+  console.log(message)
 })
 
-aedes.on('unsubscribe', function (subscriptions, client) {
-  console.log('MQTT client \x1b[32m' + (client ? client.id : client) +
-          '\x1b[0m unsubscribed to topics: ' + subscriptions.join('\n'), 'from broker', aedes.id)
-})
+aedesServer.authorizeSubscribe = function (client, sub, callback) {
+  const brokerId = aedesServer.id
+  const clientId = client.id
 
+  const topic = sub.topic 
 
-aedes.on('publish', async function (packet, client) {
-  console.log('Client \x1b[31m' + (client ? client.id : 'BROKER_' + aedes.id) + '\x1b[0m has published', packet.payload.toString(), 'on', packet.topic, 'to broker', aedes.id)
-})
+  const message = stringFormat(SUBSCRIBE_MESSAGE, clientId, topic, brokerId)
 
+  console.log(message)
+
+  callback(null, sub)
+}
+
+aedesServer.authorizePublish = function (client, packet, callback) {
+  const brokerId = aedesServer.id
+  const clientId = client.id
+
+  const topic = packet.topic
+  const messPubs = packet.payload.toString()
+
+  const message = stringFormat(PUBLISH_MESSAGE, clientId, brokerId, messPubs, topic, brokerId)
+
+  console.log(message)
+
+  callback(null)
+}
 
 //client disconnection event:
-aedes.on('clientDisconnect', (client) => {
-    message = `Client ${client.id} just DISconnected`
-    log(message)
-    aedes.publish({
-      cmd: 'publish',
-      qos: 2,
-      topic: 'main',
-      payload: message,
-      retain: false
-    })
-  }
-)
+aedesServer.on('clientDisconnect', (client) => {
+  const message = stringFormat(CLEINT_DISCONNECTED_MESSAGE, client.id)
+  console.log(message)
+})
 
-server.listen(PORT, function () {
-  log(`server listening on port ${PORT}`)
+server.listen(MQTT_PORT, function () {
+  log(`server listening on port ${MQTT_PORT}`)
 })
