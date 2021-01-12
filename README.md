@@ -1,31 +1,14 @@
-## Mqtt-broker
-
-Simple Mqtt broker used in mqtt projet. 
+## Arduino car 
+Base on esp32, C++.
+Board esp32
 ## Library
-- Aede - boker
-- Mqtt - client
+- WiFi
+- PubSubClient
 
 ## Install 
+ Arduino Ide
+ Esp32 library
+ 
+## Reference
 
-``` shell
-$ npm install
-```
-
-## Run boker
-
-``` shell
-$ npm start
-```
-or
-
-``` shell
-$ node boker
-```
-
-## Run client test
-
-``` shell
-$ node client
-```
-
-
+https://www.elektor.com/freertos-for-esp32-arduino?fbclid=IwAR3F9bwVM5UqE_YTOYYQMty2XUG4-8TlRg_cS4FBe-t5mgISUSOB4UYncxw
