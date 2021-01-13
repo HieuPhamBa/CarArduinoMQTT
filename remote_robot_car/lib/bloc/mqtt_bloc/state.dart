@@ -11,7 +11,7 @@ abstract class MQTTState extends Equatable{
 
 class LoadingState extends MQTTState{}
 
-//class HasInitializedMQTT extends MQTTState{}
+class HasInitializedMQTT extends MQTTState{}
 
 class ConnectedMQTT extends MQTTState{}
 

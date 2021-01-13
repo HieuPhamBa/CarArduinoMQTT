@@ -18,42 +18,63 @@ class HomeWidget extends StatelessWidget {
       ),
       child: Scaffold(
           key: scaffoldKey,
-          body: SafeArea(
-              child: BlocListener<UpdateDataBloc, UpdateDataState>(
-                  listener: (context, state) {
-                    if (state is FailedData) {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text('Error'),
-                                content: Text(state.error),
-                                actions: [
-                                  RaisedButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('OK'),
-                                  )
-                                ],
-                              ));
-                    }
-                  },
-                  child: _bodyWidget(context)))),
+          body: BlocListener<UpdateDataBloc, UpdateDataState>(
+              listener: (context, state) {
+                if (state is FailedData) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: Text('Error'),
+                            content: Text(state.error),
+                            actions: [
+                              RaisedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('OK'),
+                              )
+                            ],
+                          ));
+                }
+              },
+              child: _bodyWidget(context))),
     );
   }
 
   Widget _bodyWidget(BuildContext context) {
     final sc = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(height: sc.height / 2, child: MyPhoneListenerWidget()),
-          SizedBox(height: 250.h, child: ButtonGroupWidget()),
-          SizedBox(
-            height: 52.h,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          stops: [
+            0.1,
+            0.3,
+            0.5,
+            0.8
+          ],
+          colors: <Color>[
+            Colors.red,
+            Colors.redAccent,
+            Colors.amberAccent,
+            Colors.amber
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(height: sc.height / 2, child: MyPhoneListenerWidget()),
+              SizedBox(height: 250.h, child: ButtonGroupWidget()),
+              SizedBox(
+                height: 52.h,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

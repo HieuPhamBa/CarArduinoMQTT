@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/screenutil.dart';
 import 'package:loading/loading.dart';
 
 class LoadingDialog {
-  static void show(BuildContext context, String mess) {
+  static void show(BuildContext context, {String mess}) {
     showDialog(
         context: context,
         builder: (context) => Column(
@@ -24,23 +24,6 @@ class LoadingDialog {
                         .primaryTextTheme
                         .caption
                         .copyWith(fontSize: ScreenUtil().setSp(fzCaption)),
-                  ),
-                ),
-                SizedBox(
-                  height: ScreenUtil().setHeight(10),
-                ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(90)),
-                  ),
-                  color: colorIconWhite,
-                  onPressed: () => hide(context),
-                  child: Text(
-                    'Hủy',
-                    style: Theme.of(context).primaryTextTheme.button.copyWith(
-                        color: colorTextSecondary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: ScreenUtil().setSp(fzButton)),
                   ),
                 ),
               ],

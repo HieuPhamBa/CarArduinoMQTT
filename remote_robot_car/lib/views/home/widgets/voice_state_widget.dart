@@ -133,7 +133,7 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
             style: Theme.of(context)
                 .primaryTextTheme
                 .subtitle1
-                .copyWith(color: Colors.grey, fontSize: 18.sp),
+                .copyWith(color: Colors.white, fontSize: 20.sp),
           ),
         ),
         Visibility(

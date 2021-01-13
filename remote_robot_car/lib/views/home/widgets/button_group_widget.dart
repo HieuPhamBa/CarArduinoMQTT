@@ -46,6 +46,7 @@ class ButtonGroupWidget extends StatelessWidget {
             child: IconButton(
               icon: Icon(
                 Icons.exit_to_app,
+                size: 36,
                 color: Colors.black,
               ),
               onPressed: () {
@@ -57,6 +58,7 @@ class ButtonGroupWidget extends StatelessWidget {
           child: IconButton(
             icon: Icon(
               Icons.settings,
+              size: 36,
               color: Colors.black,
             ),
             onPressed: () => _settings(context),

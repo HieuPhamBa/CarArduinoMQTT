@@ -5,7 +5,6 @@ import 'package:remoterobotcar/configs/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:remoterobotcar/provider/singletons/get_it.dart';
 import 'package:remoterobotcar/views/home/home_widget/home_widget.dart';
-import 'package:remoterobotcar/views/home/loadings/home.dart';
 import 'package:remoterobotcar/views/router/route_name.dart';
 
 RouteFactory router() {
@@ -19,18 +18,6 @@ RouteFactory router() {
         return PageRouteBuilder(
           pageBuilder: (context, a1, a2) => BlocProvider<UpdateDataBloc>(
               create: (_) => locator<UpdateDataBloc>(), child: HomeWidget()),
-          transitionsBuilder: (c, anim, a2, child) =>
-              FadeTransition(opacity: anim, child: child),
-          transitionDuration: Duration(milliseconds: 1000),
-        );
-      case RouteName.connectMQTT:
-        final ip = args['ip'];
-
-        return PageRouteBuilder(
-          pageBuilder: (context, a1, a2) => BlocProvider(
-              create: (context) =>
-                  locator<MQTTBloc>()..add(ConnectMQTTService(ip)),
-              child: ConnectMQTTWidget(args.toString())),
           transitionsBuilder: (c, anim, a2, child) =>
               FadeTransition(opacity: anim, child: child),
           transitionDuration: Duration(milliseconds: 1000),

@@ -10,7 +10,7 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
 
   @override
   // TODO: implement initialState
-  MQTTState get initialState => LoadingState();
+  MQTTState get initialState => HasInitializedMQTT();
 
   @override
   Stream<MQTTState> mapEventToState(MQTTEvent event) async* {
