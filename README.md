@@ -1,11 +1,3 @@
-## Mqtt-broker
+## FreeRTOS car with esp32
+Base on: c++ esp32, flutter mobile app, node js Borker mqtt
 
-Simple Mqtt broker used in Electrolink projet. 
-
-## Install and run
-``` shell
-$ npm install
-$ npm start
-```
-## License
-[Apache-2.0](https://github.com/projectiota/electrolink/blob/master/LICENSE)
