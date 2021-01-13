@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <Arduino.h>
+#include <analogWrite.h>
 
 int speedCar = 255;
 int speed_Coeff = 3;
@@ -34,11 +36,6 @@ const char *CMD_GOALEFT = "goAheadLeft";
 const char *CMD_GOBRIGHT = "goBackRight";
 const char *CMD_GOBLEFT = "goBackLeft";
 
-#define LEDC_CHANNEL_0     0
-#define LEDC_TIMER_13_BIT  13
-#define LEDC_BASE_FREQ     5000
-
-
 static int app_cpu = 0;
 
 WiFiClient espClient;
@@ -64,12 +61,8 @@ void setup()
 
   app_cpu = xPortGetCoreID();
 
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(enA, LEDC_CHANNEL_0);
-
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(enB, LEDC_CHANNEL_0);
-  
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
@@ -255,26 +248,17 @@ void callback(char *topic, byte *payload, unsigned int length)
   Serial.println();
 }
 
-void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
-  // calculate duty, 8191 from 2 ^ 13 - 1
-  uint32_t duty = (8191 / valueMax) * min(value, valueMax);
-
-  // write duty to LEDC
-  ledcWrite(channel, duty);
-}
-
-
 void goAhead()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, 200);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, 200);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 
-  Serial.println("-Car go ahead-");
+  Serial.println("Car current status: Car go ahead");
 }
 
 void goBack()
