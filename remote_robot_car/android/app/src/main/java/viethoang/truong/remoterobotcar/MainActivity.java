@@ -139,6 +139,7 @@ public class MainActivity extends FlutterActivity implements edu.cmu.pocketsphin
         switchSearch(KWS_SEARCH);
         result.success(VoskStatus.LISTENING.name());
     }
+
     @Override
     public void onBeginningOfSpeech() {
 
@@ -146,7 +147,7 @@ public class MainActivity extends FlutterActivity implements edu.cmu.pocketsphin
 
     @Override
     public void onEndOfSpeech() {
-        if (!recognizer.getSearchName().equals(KWS_SEARCH))
+        if (recognizer != null && !recognizer.getSearchName().equals(KWS_SEARCH))
             switchSearch(KWS_SEARCH);
     }
 
@@ -171,7 +172,7 @@ public class MainActivity extends FlutterActivity implements edu.cmu.pocketsphin
                 voskEvents.success(VoskStatus.WAKEUP.name());
 //                System.out.println("Đang nghe...");
             } else {
-                mediaPlayer= MediaPlayer.create(MainActivity.this, R.raw.f);
+                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.f);
                 mediaPlayer.start();
                 voskEvents.success(action);
             }
@@ -199,7 +200,7 @@ public class MainActivity extends FlutterActivity implements edu.cmu.pocketsphin
 
         WeakReference<MainActivity> activityReference;
 
-        SetupTask(MainActivity activity,  MethodChannel.Result result) {
+        SetupTask(MainActivity activity, MethodChannel.Result result) {
             this.activityReference = new WeakReference<>(activity);
             this.resultChannel = result;
         }
@@ -250,17 +251,20 @@ public class MainActivity extends FlutterActivity implements edu.cmu.pocketsphin
 
     // Chuyền đổi giữa nhận dạng key wakeup và key word menu chức năng
     private void switchSearch(String kwsSearch) {
-        recognizer.stop();
+        if (recognizer != null) {
+            recognizer.stop();
 
-        if (kwsSearch.equals(KWS_SEARCH)) {
-            recognizer.startListening(kwsSearch);
-            voskEvents.success(VoskStatus.LISTENING.name());
-            // Toast.makeText(MainActivity.this, kwsSearch, Toast.LENGTH_LONG).show();
-        } else {
-            mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.wakeup);
-            mediaPlayer.start();
-            recognizer.startListening(kwsSearch, 5000);
-            voskEvents.success(VoskStatus.WAKEUP.name());
+
+            if (kwsSearch.equals(KWS_SEARCH)) {
+                recognizer.startListening(kwsSearch);
+                voskEvents.success(VoskStatus.LISTENING.name());
+                // Toast.makeText(MainActivity.this, kwsSearch, Toast.LENGTH_LONG).show();
+            } else {
+                mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.wakeup);
+                mediaPlayer.start();
+                recognizer.startListening(kwsSearch, 5000);
+                voskEvents.success(VoskStatus.WAKEUP.name());
+            }
         }
 
     }

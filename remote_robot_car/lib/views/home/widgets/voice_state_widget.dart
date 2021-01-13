@@ -52,7 +52,7 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
     VoiceControllerProvider.wakeupStreamChannel
         .receiveBroadcastStream()
         .listen((data) {
-//      print(data);
+      print(data);
       if (data.toString().contains("WAKEUP")) {
         setState(() {
           text = "Listening...";
@@ -99,6 +99,13 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
         text = "Voice recognition is not available";
       });
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
   }
 
   @override

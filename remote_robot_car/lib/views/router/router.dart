@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remoterobotcar/bloc/mqtt_bloc/bloc.dart';
 import 'package:remoterobotcar/bloc/update_data_bloc/bloc.dart';
+import 'package:remoterobotcar/bloc/vosk_bloc/vosk_bloc.dart';
 import 'package:remoterobotcar/configs/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:remoterobotcar/provider/singletons/get_it.dart';
@@ -16,8 +17,11 @@ RouteFactory router() {
     switch (settings.name) {
       case RouteName.home:
         return PageRouteBuilder(
-          pageBuilder: (context, a1, a2) => BlocProvider<UpdateDataBloc>(
-              create: (_) => locator<UpdateDataBloc>(), child: HomeWidget()),
+          pageBuilder: (context, a1, a2) {
+            BlocProvider.of<VoskBloc>(context).add(StartVoskEvent());
+            return BlocProvider<UpdateDataBloc>(
+                create: (_) => locator<UpdateDataBloc>(), child: HomeWidget());
+          },
           transitionsBuilder: (c, anim, a2, child) =>
               FadeTransition(opacity: anim, child: child),
           transitionDuration: Duration(milliseconds: 1000),

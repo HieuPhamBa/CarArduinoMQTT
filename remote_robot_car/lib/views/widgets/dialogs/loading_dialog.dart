@@ -9,6 +9,7 @@ class LoadingDialog {
   static void show(BuildContext context, {String mess}) {
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

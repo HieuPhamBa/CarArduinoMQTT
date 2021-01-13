@@ -30,7 +30,9 @@ class _InputIPPageState extends State<InputIPPage> {
           child: BlocListener<MQTTBloc, MQTTState>(
         listener: (context, state) {
           if (state is LoadingState) {
-            LoadingDialog.show(context,);
+            LoadingDialog.show(
+              context,
+            );
           }
           if (state is ConnectedMQTT) {
             Timer(Duration(milliseconds: 1500), () {
@@ -60,7 +62,7 @@ class _InputIPPageState extends State<InputIPPage> {
             children: [
               TextFormField(
                 controller: _textController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.text,
                 validator: (value) {
                   if (!value.contains(RegExp(
                       r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'))) {
