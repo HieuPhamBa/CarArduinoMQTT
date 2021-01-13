@@ -24,7 +24,7 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
 
   Stream<MQTTState> _connectMQTT(ConnectMQTTService event) async* {
     yield LoadingState();
-    _mqttService.initMQTT();
+    _mqttService.initMQTT(event.ip);
 //    yield ConnectedMQTT();
     try {
       await _mqttService.connectMQTT();
@@ -32,8 +32,7 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
           MqttConnectionState.connected) {
         // subscribe topics of classrooms
 
-        _mqttService.client
-            .subscribe("testtopic/1", MqttQos.atMostOnce);
+        _mqttService.client.subscribe("testtopic/1", MqttQos.atMostOnce);
 
         yield ConnectedMQTT(); // thông báo connect thành công
       } else {

@@ -7,4 +7,5 @@ class IconConstants{
   static const String goAheadLeft = "assets/diagonal_ahead_left.svg";
   static const String goBackRight = "assets/diagonal-down-right-arrow.svg";
   static const String goBackLeft = "assets/diagonal-down-left-arrow.svg";
+  static const String radar = "assets/radar.svg";
 }

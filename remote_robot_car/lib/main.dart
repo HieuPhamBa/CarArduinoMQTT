@@ -17,7 +17,8 @@ void main() {
   BlocSupervisor.delegate = AppBlocDelegate(); // setup logging bloc
   // set only vertical screen
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
   ]).then((_) {
     runApp(BlocProvider<AppBloc>(
         create: (context) => locator<AppBloc>()

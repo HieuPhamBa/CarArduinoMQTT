@@ -8,10 +8,14 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Loading(
-            indicator: BallPulseIndicator(),
-            size: ScreenUtil().setWidth(50),
-            color: Colors.blue),
+        child: Column(
+          children: [
+            Loading(
+                indicator: BallPulseIndicator(),
+                size: ScreenUtil().setWidth(50),
+                color: Colors.blue),
+          ],
+        ),
       ),
     );
   }

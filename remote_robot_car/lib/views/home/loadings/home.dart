@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ConnectMQTTWidget extends StatelessWidget {
+  final String ipAddress;
+
+  ConnectMQTTWidget(this.ipAddress);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,15 +28,15 @@ class ConnectMQTTWidget extends StatelessWidget {
             return AppErrorWidget(
               iconData: Icons.cloud_off,
               mess: 'Lỗi kết nối',
-              function: () =>
-                  BlocProvider.of<MQTTBloc>(context).add(ConnectMQTTService()),
+              function: () => BlocProvider.of<MQTTBloc>(context)
+                  .add(ConnectMQTTService(ipAddress)),
             );
           } else if (state is DisconnectedMQTT) {
             return AppErrorWidget(
               iconData: Icons.cloud_off,
               mess: 'Đã ngắt kết nối !',
-              function: () =>
-                  BlocProvider.of<MQTTBloc>(context).add(ConnectMQTTService()),
+              function: () => BlocProvider.of<MQTTBloc>(context)
+                  .add(ConnectMQTTService(ipAddress)),
             );
           }
 

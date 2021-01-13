@@ -2,6 +2,7 @@ import 'package:remoterobotcar/bloc/app_bloc/bloc.dart';
 import 'package:remoterobotcar/bloc/mqtt_bloc/bloc.dart';
 import 'package:remoterobotcar/provider/singletons/get_it.dart';
 import 'package:remoterobotcar/views/home/loadings/home.dart';
+import 'package:remoterobotcar/views/input_ip_address/input_ip_page.dart';
 import 'package:remoterobotcar/views/router/route_name.dart';
 import 'package:remoterobotcar/views/router/router.dart';
 import 'package:remoterobotcar/views/splash/splash_screen.dart';
@@ -33,10 +34,7 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             ScreenUtil.init(context, width: 375, height: 812);
             if (state is AppAuthenticated) {
-              return BlocProvider(
-                  create: (context) =>
-                      locator<MQTTBloc>()..add(ConnectMQTTService()),
-                  child: ConnectMQTTWidget());
+              return InputIPPage();
             }
             return SplashScreen();
           },

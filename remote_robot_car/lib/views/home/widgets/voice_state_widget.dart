@@ -1,45 +1,44 @@
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remoterobotcar/bloc/update_data_bloc/update_data_bloc.dart';
 import 'package:remoterobotcar/bloc/update_data_bloc/update_data_event.dart';
 import 'package:remoterobotcar/bloc/vosk_bloc/vosk_bloc.dart';
 import 'package:remoterobotcar/configs/constants/control_remote_constants.dart';
+import 'package:remoterobotcar/configs/constants/flare_constants.dart';
 import 'package:remoterobotcar/configs/constants/vosk_constants.dart';
 import 'package:remoterobotcar/model/mqtt/message.dart';
 import 'package:remoterobotcar/provider/voice_controller/voice_controller_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyPhoneListenerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 52,
-      alignment: Alignment.center,
-      child: BlocBuilder<VoskBloc, VoskState>(
-        builder: (context, state) {
-          if (state is VoskInited) {
-            return VoiceContentWidget();
-          }
-          return Text(
-            'Voice recognition is not available',
-            style: Theme.of(context)
-                .primaryTextTheme
-                .caption
-                .copyWith(color: Colors.grey),
-          );
-        },
-      ),
+    return BlocBuilder<VoskBloc, VoskState>(
+      builder: (context, state) {
+        if (state is VoskInited) {
+          return VoiceContentWidget(true);
+        }
+        return VoiceContentWidget(false);
+      },
     );
   }
 }
 
 class VoiceContentWidget extends StatefulWidget {
+  final bool isEnable;
+
+  VoiceContentWidget(this.isEnable);
+
   @override
   _VoiceContentWidgetState createState() => _VoiceContentWidgetState();
 }
 
 class _VoiceContentWidgetState extends State<VoiceContentWidget> {
   String text = "Say 'Ok Sunday'";
+  String keyFlare = FlareConstants.keyStand;
+  bool isEnable = false;
 
   void _remoteRobot(String message) {
     BlocProvider.of<UpdateDataBloc>(context)
@@ -53,14 +52,16 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
     VoiceControllerProvider.wakeupStreamChannel
         .receiveBroadcastStream()
         .listen((data) {
-      print(data);
+//      print(data);
       if (data.toString().contains("WAKEUP")) {
         setState(() {
           text = "Listening...";
+          keyFlare = FlareConstants.keyThink;
         });
       } else if (data.toString().contains("LISTENING")) {
         setState(() {
           text = "Say '${VoskConstants.wakeup}'";
+          keyFlare = FlareConstants.keyStand;
         });
       } else {
         final action = data.toString();
@@ -90,6 +91,7 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
               text = "Don't understand";
             }
           }
+          keyFlare = FlareConstants.keyOkay;
         });
       }
     }).onError((err) {
@@ -101,11 +103,18 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
+        SizedBox(
+          height: 200.w,
+          width: 200.w,
+          child: FlareActor(FlareConstants.robotAssistant,
+              alignment: Alignment.center,
+              fit: BoxFit.contain,
+              animation: keyFlare),
+        ),
         AvatarGlow(
-          animate: true,
+          animate: widget.isEnable,
           glowColor: Colors.blue,
           endRadius: 45.0,
           duration: const Duration(milliseconds: 2000),
@@ -113,15 +122,29 @@ class _VoiceContentWidgetState extends State<VoiceContentWidget> {
           repeat: true,
           child: Icon(
             Icons.mic,
-            color: Colors.white,
+            color: Colors.blue,
+            size: 36,
           ),
         ),
-        Text(
-          text,
-          style: Theme.of(context)
-              .primaryTextTheme
-              .caption
-              .copyWith(color: Colors.grey),
+        Visibility(
+          visible: widget.isEnable,
+          child: Text(
+            text,
+            style: Theme.of(context)
+                .primaryTextTheme
+                .subtitle1
+                .copyWith(color: Colors.grey, fontSize: 18.sp),
+          ),
+        ),
+        Visibility(
+          visible: !widget.isEnable,
+          child: Text(
+            'Voice recognition is not available',
+            style: Theme.of(context)
+                .primaryTextTheme
+                .caption
+                .copyWith(color: Colors.grey),
+          ),
         ),
       ],
     );

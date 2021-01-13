@@ -9,7 +9,8 @@ class MQTTService {
 
   MqttServerClient get client => _client;
 
-  final String _host = '40.117.140.73';
+  //final String _host = '40.117.140.73';
+//  final String _host = '192.168.55.49';
   final int _port = 1883;
   final String _clientIdentifier = 'kma_${Random().nextInt(99)}';
   final int _keepAlivePeriod = 15;
@@ -38,8 +39,8 @@ class MQTTService {
     debugPrint('>>> Ping response client callback invoked');
   }
 
-  void initMQTT() {
-    _client = MqttServerClient(_host, '');
+  void initMQTT(String ip) {
+    _client = MqttServerClient(ip, '');
     _client.port = _port;
     _client.onConnected = _onConnected;
     _client.keepAlivePeriod = _keepAlivePeriod;
