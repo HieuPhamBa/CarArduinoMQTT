@@ -1,5 +1,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <Arduino.h>
+#include <analogWrite.h>
 
 int speedCar = 255;
 int speed_Coeff = 3;
@@ -7,7 +9,7 @@ int speed_Coeff = 3;
 #define ssid "nokia110i"
 #define password "12345678"
 
-#define mqtt_server "40.117.140.73"  // Thay bằng thông tin của bạn
+#define mqtt_server "192.168.43.181"  // Thay bằng thông tin của bạn
 #define mqtt_topic_pub "arduino_msg" //Giữ nguyên nếu bạn tạo topic tên là demo
 #define mqtt_topic_sub "testtopic/1"
 #define mqtt_user "robotCar" //Giữ nguyên nếu bạn tạo user là esp8266 và pass là 123456
@@ -17,12 +19,12 @@ int speed_Coeff = 3;
 
 const uint16_t mqtt_port = 1883;
 
-int enA = 12;
-int in1 = 14;
-int in2 = 27;
-int in3 = 26;
-int in4 = 25;
-int enB = 33;
+int enA = 14;
+int in1 = 27;
+int in2 = 26;
+int in3 = 25;
+int in4 = 33;
+int enB = 32;
 
 const char *CMD_GOAHEAD = "goAhead";
 const char *CMD_GOBACK = "goBack";
@@ -33,11 +35,6 @@ const char *CMD_GOARIGHT = "goAheadRight";
 const char *CMD_GOALEFT = "goAheadLeft";
 const char *CMD_GOBRIGHT = "goBackRight";
 const char *CMD_GOBLEFT = "goBackLeft";
-
-#define LEDC_CHANNEL_0     0
-#define LEDC_TIMER_13_BIT  13
-#define LEDC_BASE_FREQ     5000
-
 
 static int app_cpu = 0;
 
@@ -64,17 +61,12 @@ void setup()
 
   app_cpu = xPortGetCoreID();
 
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(enA, LEDC_CHANNEL_0);
-
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(enB, LEDC_CHANNEL_0);
-  
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
- 
 
   delay(2000); // Allow USB init time
 
@@ -143,7 +135,7 @@ void send_jsp(void *argp){
   for (;;)
   {
      client.publish(mqtt_toppic_jsp_pub, "12:243:33");
-     vTaskDelay(1);
+     vTaskDelay(10);
   }
 }
 
@@ -220,7 +212,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   else if (strcmp(mesages, CMD_GOBACK) == 0)
   {
-    goBack();
+    goLeft();
   }
   else if (strcmp(mesages, CMD_GORIGHT) == 0)
   {
@@ -228,11 +220,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
   else if (strcmp(mesages, CMD_GOLEFT) == 0)
   {
-    goLeft();
-  }
-  else if (strcmp(mesages, CMD_STOP) == 0)
-  {
-    stopRobot();
+    goBack();
   }
   else if (strcmp(mesages, CMD_GOARIGHT) == 0)
   {
@@ -249,41 +237,36 @@ void callback(char *topic, byte *payload, unsigned int length)
   else if (strcmp(mesages, CMD_GOBLEFT) == 0)
   {
     goBackLeft();
+  } 
+  else {
+    stopRobot();
   }
+  
 
   client.publish(mqtt_topic_pub, mesages);
   Serial.println();
 }
 
-void ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255) {
-  // calculate duty, 8191 from 2 ^ 13 - 1
-  uint32_t duty = (8191 / valueMax) * min(value, valueMax);
-
-  // write duty to LEDC
-  ledcWrite(channel, duty);
-}
-
-
 void goAhead()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 
-  Serial.println("-Car go ahead-");
+  Serial.println("Car current status: Car go ahead");
 }
 
 void goBack()
 {
-  ledcAnalogWrite(22, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 
@@ -292,11 +275,11 @@ void goBack()
 
 void stopRobot()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, 0);
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, 0);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 
@@ -305,11 +288,11 @@ void stopRobot()
 
 void goRight()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 
@@ -318,11 +301,11 @@ void goRight()
 
 void goLeft()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 
@@ -331,11 +314,11 @@ void goLeft()
 
 void goAheadRight()
 {
-  ledcAnalogWrite(enA, speedCar / speed_Coeff);
+  analogWrite(enA, speedCar / speed_Coeff);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 
@@ -344,11 +327,11 @@ void goAheadRight()
 
 void goAheadLeft()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
 
-  ledcAnalogWrite(enB, speedCar / speed_Coeff);
+  analogWrite(enB, speedCar / speed_Coeff);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 
@@ -357,11 +340,11 @@ void goAheadLeft()
 
 void goBackRight()
 {
-  ledcAnalogWrite(enA, speedCar / speed_Coeff);
+  analogWrite(enA, speedCar / speed_Coeff);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
 
-  ledcAnalogWrite(enB, speedCar);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 
@@ -370,11 +353,11 @@ void goBackRight()
 
 void goBackLeft()
 {
-  ledcAnalogWrite(enA, speedCar);
+  analogWrite(enA, speedCar);
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
 
-  ledcAnalogWrite(enB, speedCar / speed_Coeff);
+  analogWrite(enB, speedCar);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 
